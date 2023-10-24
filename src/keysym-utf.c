@@ -828,6 +828,46 @@ static const struct codepair keysymtab[] = {
     { 0x20ac, 0x20ac }, /*                    EuroSign € EURO SIGN */
 };
 
+static const struct codepair keysymcolemaktab[] = {
+    //semicolon key(s) come before the alphabet and this table needs to be sorted
+    { 0x003a, 0x004f }, /* : - O (colon should be shift + semicolon) */
+    { 0x003b, 0x006f }, /* ; - o */
+
+    { 0x0044, 0x0053 }, /* D - S */
+    { 0x0045, 0x0046 }, /* E - F */
+    { 0x0046, 0x0054 }, /* F - T */
+    { 0x0047, 0x0044 }, /* G - D */
+    { 0x0049, 0x0055 }, /* I - U */
+    { 0x004a, 0x004e }, /* J - N */
+    { 0x004b, 0x0045 }, /* K - E */
+    { 0x004c, 0x0049 }, /* L - I */
+    { 0x004e, 0x004b }, /* N - K */
+    { 0x004f, 0x0059 }, /* O - Y */
+    { 0x0050, 0x003a }, /* P - : (colon should be shift + semicolon) */
+    { 0x0052, 0x0050 }, /* R - P */
+    { 0x0053, 0x0052 }, /* S - R */
+    { 0x0054, 0x0047 }, /* T - G */
+    { 0x0055, 0x004c }, /* U - L */
+    { 0x0059, 0x004a }, /* Y - J */
+
+    { 0x0064, 0x0073 }, /* d - s */
+    { 0x0065, 0x0066 }, /* e - f */
+    { 0x0066, 0x0074 }, /* f - t */
+    { 0x0067, 0x0064 }, /* g - d */
+    { 0x0069, 0x0075 }, /* i - u */
+    { 0x006a, 0x006e }, /* j - n */
+    { 0x006b, 0x0065 }, /* k - e */
+    { 0x006c, 0x0069 }, /* l - i */
+    { 0x006e, 0x006b }, /* n - k */
+    { 0x006f, 0x0079 }, /* o - y */
+    { 0x0070, 0x003b }, /* p - ; */
+    { 0x0072, 0x0070 }, /* r - p */
+    { 0x0073, 0x0072 }, /* s - r */
+    { 0x0074, 0x0067 }, /* t - g */
+    { 0x0075, 0x006c }, /* u - l */
+    { 0x0079, 0x006a }, /* y - j */
+};
+
 /* binary search with range check */
 static uint32_t
 bin_search(const struct codepair *table, size_t length, xkb_keysym_t keysym)
@@ -856,6 +896,11 @@ bin_search(const struct codepair *table, size_t length, xkb_keysym_t keysym)
 XKB_EXPORT uint32_t
 xkb_keysym_to_utf32(xkb_keysym_t keysym)
 {
+    /* check 0: convert our desired latin characters to colemak */
+    uint32_t temp = bin_search(keysymcolemaktab, ARRAY_SIZE(keysymcolemaktab) - 1, keysym);
+    if (temp)
+        return temp;
+
     /* first check for Latin-1 characters (1:1 mapping) */
     if ((keysym >= 0x0020 && keysym <= 0x007e) ||
         (keysym >= 0x00a0 && keysym <= 0x00ff))
@@ -897,6 +942,11 @@ xkb_keysym_to_utf32(xkb_keysym_t keysym)
 XKB_EXPORT xkb_keysym_t
 xkb_utf32_to_keysym(uint32_t ucs)
 {
+    /* step 0: unconvert colemak if possible */
+    for (size_t i = 0; i < ARRAY_SIZE(keysymcolemaktab); i++)
+        if (keysymcolemaktab[i].ucs == ucs)
+            return keysymcolemaktab[i].keysym;
+
     /* first check for Latin-1 characters (1:1 mapping) */
     if ((ucs >= 0x0020 && ucs <= 0x007e) ||
         (ucs >= 0x00a0 && ucs <= 0x00ff))
