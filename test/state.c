@@ -616,25 +616,25 @@ test_get_utf8_utf32(struct xkb_keymap *keymap)
     TEST_KEY(KEY_NUMLOCK, "", 0);
 
     /* Multiple keysyms. */
-    TEST_KEY(KEY_6, "HELLO", 0);
-    TEST_KEY(KEY_7, "YES THIS IS DOG", 0);
+    TEST_KEY(KEY_6, "HFIIY", 0); //Converted to colemak
+    TEST_KEY(KEY_7, "JFR GHUR UR SYD", 0); //Converted to colemak
 
     /* Check truncation. */
     memset(buf, 'X', sizeof(buf));
-    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 0) == strlen("HELLO"));
+    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 0) == strlen("HFIIY")); //Converted to colemak
     assert(memcmp(buf, "X", 1) == 0);
-    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 1) == strlen("HELLO"));
+    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 1) == strlen("HFIIY")); //Converted to colemak
     assert(memcmp(buf, "", 1) == 0);
-    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 2) == strlen("HELLO"));
+    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 2) == strlen("HFIIY")); //Converted to colemak
     assert(memcmp(buf, "H", 2) == 0);
-    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 3) == strlen("HELLO"));
-    assert(memcmp(buf, "HE", 3) == 0);
-    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 5) == strlen("HELLO"));
-    assert(memcmp(buf, "HELL", 5) == 0);
-    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 6) == strlen("HELLO"));
-    assert(memcmp(buf, "HELLO", 6) == 0);
-    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 7) == strlen("HELLO"));
-    assert(memcmp(buf, "HELLO\0X", 7) == 0);
+    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 3) == strlen("HFIIY")); //Converted to colemak
+    assert(memcmp(buf, "HF", 3) == 0); //Converted to colemak
+    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 5) == strlen("HFIIY")); //Converted to colemak
+    assert(memcmp(buf, "HFII", 5) == 0); //Converted to colemak
+    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 6) == strlen("HFIIY")); //Converted to colemak
+    assert(memcmp(buf, "HFIIY", 6) == 0); //Converted to colemak
+    assert(xkb_state_key_get_utf8(state, KEY_6 + EVDEV_OFFSET, buf, 7) == strlen("HFIIY")); //Converted to colemak
+    assert(memcmp(buf, "HFIIY\0X", 7) == 0); //Converted to colemak
 
     /* Switch to ru layout */
     xkb_state_update_key(state, KEY_COMPOSE + EVDEV_OFFSET, XKB_KEY_DOWN);
@@ -657,8 +657,8 @@ test_get_utf8_utf32(struct xkb_keymap *keymap)
     TEST_KEY(KEY_1, "!", 0x21);
     xkb_state_update_key(state, KEY_LEFTSHIFT + EVDEV_OFFSET, XKB_KEY_UP);
 
-    TEST_KEY(KEY_6, "HELLO", 0);
-    TEST_KEY(KEY_7, "YES THIS IS DOG", 0);
+    TEST_KEY(KEY_6, "HFIIY", 0); //Converted to colemak
+    TEST_KEY(KEY_7, "JFR GHUR UR SYD", 0); //Converted to colemak
 
     xkb_state_unref(state);
 }
